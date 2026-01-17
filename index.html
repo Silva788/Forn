@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Santana Forn</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: linear-gradient(135deg,#000,#2b004f);
+  color:white;
+  text-align:center;
+  padding:20px;
+}
+
+h1 {color:#a855f7;}
+
+input {
+  width:90%;
+  padding:12px;
+  border-radius:8px;
+  border:none;
+  margin-top:10px;
+}
+
+button {
+  margin-top:15px;
+  padding:12px 25px;
+  border-radius:8px;
+  border:none;
+  background:#a855f7;
+  color:white;
+  font-weight:bold;
+}
+
+#resultado, #loginResultado {
+  margin-top:20px;
+  font-size:18px;
+}
+
+#app {
+  display:none;
+}
+
+.watermark {
+  position:fixed;
+  bottom:10px;
+  right:10px;
+  opacity:0.3;
+  font-size:14px;
+  color:#a855f7;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <h1>🔐 Login Santana Forn</h1>
+  <input id="senha" type="password" placeholder="Digite a senha">
+  <br>
+  <button onclick="entrar()">Entrar</button>
+  <div id="loginResultado"></div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <h1>🔗 Testador de Link</h1>
+
+  <input id="link" placeholder="Cole o link aqui">
+  <br>
+  <button onclick="testar()">Testar link</button>
+
+  <div id="resultado"></div>
+</div>
+
+<div class="watermark">SANTANA FORN</div>
+
+<script>
+const senhas = ["H777B5","GB6789","KKK891"];
+
+function entrar(){
+  let s = document.getElementById("senha").value;
+  let r = document.getElementById("loginResultado");
+
+  s = s.trim().toUpperCase();
+
+  if(senhas.includes(s)){
+    document.getElementById("login").style.display="none";
+    document.getElementById("app").style.display="block";
+  } else {
+    r.innerHTML="❌ Senha incorreta.";
+  }
+}
+
+function testar(){
+  let link = document.getElementById("link").value.trim();
+  let resultado = document.getElementById("resultado");
+
+  if(!link){
+    resultado.innerHTML = "❌ Cole um link primeiro.";
+    return;
+  }
+
+  if(!link.startsWith("http")){
+    link = "https://" + link;
+  }
+
+  resultado.innerHTML = "⏳ Testando link...";
+
+  let proxy = "https://api.allorigins.win/raw?url=" + encodeURIComponent(link);
+
+  fetch(proxy)
+  .then(res=>{
+    if(res.ok){
+      return res.text();
+    } else {
+      throw new Error();
+    }
+  })
+  .then(data=>{
+    if(data.length < 50){
+      resultado.innerHTML = "⚠️ Link existe, mas sem conteúdo.";
+    } else {
+      resultado.innerHTML = "✅ Link funcionando corretamente!";
+    }
+  })
+  .catch(()=>{
+    resultado.innerHTML = "❌ Link inválido, quebrado ou bloqueado.";
+  });
+}
+</script>
+
+</body>
+</html>
